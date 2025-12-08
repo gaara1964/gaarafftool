@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>GAARA FF TOOL - Login</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --bg: #050816;
+      --accent: #4f75df;
+      --accent-2: #6621d6;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+    }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body{
+      font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:radial-gradient(circle at top,#111827 0,#020617 60%,#000 100%);
+      color:var(--text);
+      padding:16px;
+    }
+    /* Toast */
+    #toast{
+      position:fixed;
+      top:12px;
+      left:50%;
+      transform:translateX(-50%);
+      background:rgba(15,23,42,.98);
+      border-radius:999px;
+      padding:8px 14px;
+      display:flex;
+      align-items:center;
+      gap:6px;
+      color:#e5e7eb;
+      font-size:14px;
+      box-shadow:0 18px 45px rgba(0,0,0,.7);
+      opacity:0;
+      pointer-events:none;
+      transition:.25s ease;
+      z-index:9999;
+    }
+    #toast.show{opacity:1; transform:translateX(-50%) translateY(4px);}
+    #toast i{font-size:15px;}
+    #toast.error{border:1px solid rgba(248,113,113,.7);}
+    #toast.error i{color:#f97373;}
+    #toast.success{border:1px solid rgba(74,222,128,.7);}
+    #toast.success i{color:#4ade80;}
+
+    .login-shell{
+      width:100%;
+      max-width:420px;
+      position:relative;
+    }
+
+    .login-card{
+      background:linear-gradient(135deg,#020617,#02030a);
+      border-radius:22px;
+      border:1px solid rgba(148,163,184,.4);
+      box-shadow:0 30px 80px rgba(0,0,0,.9);
+      padding:18px 18px 16px;
+      position:relative;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      min-height:420px;
+    }
+    .login-card::before{
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background:radial-gradient(circle at top,#4338ca 0,transparent 55%);
+      opacity:.25;
+      pointer-events:none;
+    }
+
+    .login-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:4px;
+      position:relative;
+      z-index:1;
+    }
+    .login-title{
+      display:flex;
+      flex-direction:column;
+      gap:3px;
+    }
+    .login-title h1{
+      font-size:20px;
+      letter-spacing:.15em;
+      text-transform:uppercase;
+    }
+    .login-title span{
+      font-size:11px;
+      color:var(--muted);
+    }
+
+    .profile-btn{
+      width:40px;
+      height:40px;
+      border-radius:999px;
+      border:2px solid rgba(148,163,184,.7);
+      overflow:hidden;
+      padding:0;
+      background:transparent;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+      z-index:1;
+    }
+    .profile-btn img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .form-group{margin-bottom:12px; position:relative; z-index:1;}
+    label{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin-bottom:4px;
+    }
+    .form-control{
+      width:100%;
+      background:rgba(10,10,15,.96);
+      border-radius:12px;
+      border:1px solid rgba(148,163,184,.45);
+      color:var(--text);
+      padding:9px 11px;
+      font-size:13px;
+      outline:none;
+    }
+    .form-control:focus{
+      border-color:rgba(59,130,246,.9);
+      box-shadow:0 0 0 1px rgba(96,165,250,.7);
+    }
+    .btn-primary{
+      width:100%;
+      margin-top:4px;
+      padding:9px 10px;
+      border-radius:14px;
+      border:none;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      color:#fff;
+      font-weight:600;
+      font-size:14px;
+      cursor:pointer;
+      position:relative;
+      z-index:1;
+    }
+    .btn-primary:active{transform:scale(.98);}
+    .helper-row{
+      font-size:12px;
+      color:var(--muted);
+      text-align:center;
+      position:relative;
+      z-index:1;
+    }
+    .helper-row strong{
+      color:#60a5fa;
+    }
+    .acess_tkn{
+      font-size:12px;
+      color:var(--muted);
+      text-align:center;
+      position:relative;
+      z-index:1;
+    }
+    .acess_tkn a{
+      color:#60a5fa;
+      text-decoration:none;
+      font-weight:600;
+    }
+    .acess_tkn a:hover{text-decoration:underline;}
+
+    .social-bar{
+      margin-top:auto;
+      position:relative;
+      z-index:1;
+      display:flex;
+      justify-content:center;
+    }
+    .social-icons {
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:center;
+    }
+    .icon-btn {
+      width:34px;
+      height:34px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,0.7);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#020617;
+      transition:0.12s;
+    }
+    .icon-btn:hover {
+      transform:translateY(-2px);
+      border-color:#689dff;
+    }
+    .icon-btn img {
+      width:20px;
+      height:20px;
+    }
+
+    /* Loading screen */
+    #loading-screen{
+      position:fixed;
+      inset:0;
+      background:radial-gradient(circle at top,#020617 0,#000 70%);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:9998;
+    }
+    #loading-screen.show{display:flex;}
+    .loading-inner{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:14px;
+    }
+    .loading-ring{
+      width:110px;
+      height:110px;
+      border-radius:999px;
+      border:3px solid rgba(148,163,184,.3);
+      position:relative;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+    }
+    .loading-ring::before{
+      content:"";
+      position:absolute;
+      inset:-4px;
+      border-radius:inherit;
+      border:3px solid transparent;
+      border-top-color:#4f46e5;
+      border-right-color:#22d3ee;
+      animation:spin 1s linear infinite;
+    }
+    .loading-ring img{
+      width:82px;
+      height:82px;
+      border-radius:999px;
+      object-fit:cover;
+      position:relative;
+      z-index:1;
+    }
+    .loading-text{
+      font-size:13px;
+      color:var(--muted);
+      letter-spacing:.15em;
+      text-transform:uppercase;
+    }
+    .loading-text2{
+      font-size:13px;
+      text-align:center;
+      color:var(--muted);
+      letter-spacing:.15em;
+      text-transform:uppercase;
+    }
+    @keyframes spin{
+      to{transform:rotate(360deg);}
+    }
+  </style>
+</head>
+<body>
+  <div id="toast"><i class="fa-solid fa-circle-info"></i><span></span></div>
+
+  <!-- Loading screen shown after successful login -->
+  <div id="loading-screen">
+    <div class="loading-inner">
+      <div class="loading-ring">
+        <img src="profile-logo.jpg" alt="Logo">
+      </div>
+      <div class="loading-text">Loading Panel...</div>
+      <div class="loading-text2">Project by GAARA</div>
+    </div>
+  </div>
+
+  <div class="login-shell">
+    <div class="login-card">
+      <div class="login-header">
+        <div class="login-title">
+          <h1>GAARA FF TOOL</h1>
+          <span>Login to open main panel</span>
+        </div>
+        <button class="profile-btn">
+          <img src="profile-logo.jpg" alt="Logo">
+        </button>
+      </div>
+
+      <form id="login-form" autocomplete="off" style="position:relative;z-index:1;">
+        <div class="form-group">
+          <label for="login-id">User ID</label>
+          <input id="login-id" class="form-control" placeholder="Enter your ID">
+        </div>
+        <div class="form-group">
+          <label for="login-pass">Password</label>
+          <input id="login-pass" type="password" class="form-control" placeholder="Enter password">
+        </div>
+        <button class="btn-primary" type="submit">
+          <i class="fa-solid fa-right-to-bracket" style="margin-right:6px;"></i>
+          Login
+        </button>
+      </form>
+
+      <div class="helper-row">
+        Follow to get <strong>ID</strong> &nbsp; & &nbsp; <strong>Pass</strong>
+      </div>
+
+      <div class="acess_tkn">
+        <a href="https://ticket.kiosgamer.co.id/">get access token</a>
+      </div>
+
+      <div class="social-bar">
+        <div class="social-icons">
+          <a href="https://www.instagram.com/companion.1964" target="_blank" class="icon-btn" aria-label="Instagram">
+            <img src="img/instagram.svg" alt="Instagram" />
+          </a>
+          <a href="https://t.me/+ODKM2z6hs_IzNWNl" target="_blank" class="icon-btn" aria-label="Telegram">
+            <img src="img/telegram.svg" alt="Telegram" />
+          </a>
+          <a href="https://discord.gg/j2vMYyFKFC" target="_blank" class="icon-btn" aria-label="Discord">
+            <img src="img/discord.svg" alt="Discord" />
+          </a>
+          <a href="https://www.youtube.com/@COMPANION1964" target="_blank" class="icon-btn" aria-label="YouTube">
+            <img src="img/youtube.svg" alt="YouTube" />
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Constant login credentials
+    const LOGIN_USER = 'gaara';
+    const LOGIN_PASS = '1906';
+
+    let toastTimeout;
+    function showToast(msg, type='error', time=1800){
+      const t = document.getElementById('toast');
+      const span = t.querySelector('span');
+      const icon = t.querySelector('i');
+      span.textContent = msg;
+      t.className = '';
+      t.classList.add(type === 'success' ? 'success' : 'error');
+      icon.className = 'fa-solid ' + (type === 'success' ? 'fa-circle-check' : 'fa-circle-xmark');
+      t.classList.add('show');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(()=>t.classList.remove('show'), time);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('login-form');
+      const loadingScreen = document.getElementById('loading-screen');
+
+      form.addEventListener('submit', (e)=>{
+        e.preventDefault();
+        const id = document.getElementById('login-id').value.trim();
+        const pass = document.getElementById('login-pass').value;
+
+        if(!id || !pass){
+          showToast('Please fill ID and password');
+          return;
+        }
+
+        if(id !== LOGIN_USER || pass !== LOGIN_PASS){
+          showToast('FOLLOW ME TO GET CORRECT ID PASSWORD', 'error');
+          return;
+        }
+
+        // success: set one-time token and show loading, then redirect
+        sessionStorage.setItem('GAARA_ONE_TIME_TOKEN', String(Date.now()));
+        loadingScreen.classList.add('show');
+        setTimeout(()=>{
+          window.location.href = 'main.html';
+        }, 1800);
+      });
+    });
+  </script>
+</body>
+</html>
