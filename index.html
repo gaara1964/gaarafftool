@@ -371,12 +371,13 @@
       <div class="login-header">
         <div class="login-title">
           <h1>GAARA FF TOOL</h1>
-          <span>Login with approved Gmail or master ID</span>
+          <span>Login with Subscribed Gmail or ID PASS</span>
         </div>
         <button class="profile-btn">
           <img src="profile-logo.jpg" alt="Logo">
         </button>
       </div>
+
 
       <!-- GOOGLE SECTION -->
       <div class="section-title">Google Sign in</div>
@@ -406,7 +407,7 @@
       </button>
 
       <div class="helper-row">
-        Only <strong>approved Gmail IDs</strong> or the <strong>master ID</strong> can access the panel.
+        Only <strong>Subscribed Gmail IDs</strong> or the <strong>ID PASS</strong> can access the panel.
       </div>
 
       <div class="divider">
@@ -416,19 +417,21 @@
       <!-- FIXED ID & PASSWORD SECTION -->
       <form class="form-grid" onsubmit="return handleIdLogin(event)">
         <div class="field">
-          <label for="login-id">Panel ID</label>
-          <input type="text" id="login-id" autocomplete="off" placeholder="Enter panel ID">
+          <label for="login-id">User ID</label>
+          <input type="text" id="login-id" autocomplete="off" placeholder="Enter user ID">
         </div>
         <div class="field">
-          <label for="login-pass">Panel Password</label>
-          <input type="password" id="login-pass" autocomplete="off" placeholder="Enter panel password">
+          <label for="login-pass">User Password</label>
+          <input type="password" id="login-pass" autocomplete="off" placeholder="Enter user password">
         </div>
         <button class="btn-primary" type="submit">
           <i class="fa-solid fa-right-to-bracket"></i>
           Login with ID &amp; Password
         </button>
       </form>
+      
 
+     
       <div class="acess_tkn">
         <a href="https://ticket.kiosgamer.co.id/" target="_blank">get access token</a>
       </div>
@@ -522,7 +525,7 @@
 
       // Check if email is in your whitelist
       if (!ALLOWED_EMAILS.includes(email)) {
-        showToast("This Gmail is not authorized for GAARA panel.", "error");
+        showToast("This Gmail is not authorized for GAARA TOOL.", "error");
         return;
       }
 
@@ -550,9 +553,9 @@
       }
 
       if (id === MASTER_ID && pass === MASTER_PASSWORD){
-        startSuccessFlow("Master ID login successful.");
+        startSuccessFlow("login successful.");
       } else {
-        showToast("Invalid ID or password.");
+        showToast("Invalid ID or pass Follow me for ID PASS.");
       }
 
       return false;
