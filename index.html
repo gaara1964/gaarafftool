@@ -4,6 +4,13 @@
   <meta charset="utf-8">
   <title>GAARA FF TOOL - Login</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <!-- TODO: put your real Google OAuth client id here -->
+  <meta name="google-signin-client_id" content="337593306198-f2rjaghhmustluqiskftahagmbnmaqoh.apps.googleusercontent.com">
+
+  <!-- Google Identity Services script -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
     :root {
@@ -53,7 +60,7 @@
 
     .login-shell{
       width:100%;
-      max-width:420px;
+      max-width:440px;
       position:relative;
     }
 
@@ -68,7 +75,7 @@
       display:flex;
       flex-direction:column;
       gap:12px;
-      min-height:420px;
+      min-height:480px;
     }
     .login-card::before{
       content:"";
@@ -124,27 +131,25 @@
       display:block;
     }
 
-    .form-group{margin-bottom:12px; position:relative; z-index:1;}
-    label{
-      display:block;
-      font-size:12px;
+    .section-title{
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.18em;
       color:var(--muted);
-      margin-bottom:4px;
+      margin-top:8px;
+      margin-bottom:6px;
+      position:relative;
+      z-index:1;
     }
-    .form-control{
-      width:100%;
-      background:rgba(10,10,15,.96);
-      border-radius:12px;
-      border:1px solid rgba(148,163,184,.45);
-      color:var(--text);
-      padding:9px 11px;
-      font-size:13px;
-      outline:none;
+
+    .google-login-wrapper{
+      position:relative;
+      z-index:1;
+      display:flex;
+      justify-content:center;
+      margin-bottom:8px;
     }
-    .form-control:focus{
-      border-color:rgba(59,130,246,.9);
-      box-shadow:0 0 0 1px rgba(96,165,250,.7);
-    }
+
     .btn-primary{
       width:100%;
       margin-top:4px;
@@ -158,18 +163,25 @@
       cursor:pointer;
       position:relative;
       z-index:1;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
     }
     .btn-primary:active{transform:scale(.98);}
+
     .helper-row{
       font-size:12px;
       color:var(--muted);
       text-align:center;
       position:relative;
       z-index:1;
+      margin-top:4px;
     }
     .helper-row strong{
       color:#60a5fa;
     }
+
     .acess_tkn{
       font-size:12px;
       color:var(--muted);
@@ -215,6 +227,65 @@
     .icon-btn img {
       width:20px;
       height:20px;
+    }
+
+    /* ID/PASSWORD FORM */
+    .form-grid{
+      position:relative;
+      z-index:1;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      margin-top:4px;
+    }
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+    .field label{
+      font-size:11px;
+      color:var(--muted);
+    }
+    .field input{
+      width:100%;
+      padding:7px 10px;
+      border-radius:12px;
+      border:1px solid rgba(148,163,184,.55);
+      background:rgba(15,23,42,.9);
+      color:var(--text);
+      font-size:13px;
+      outline:none;
+    }
+    .field input:focus{
+      border-color:#60a5fa;
+      box-shadow:0 0 0 1px rgba(59,130,246,.4);
+    }
+
+    .divider{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      margin-top:10px;
+      margin-bottom:2px;
+      position:relative;
+      z-index:1;
+      color:var(--muted);
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.18em;
+    }
+    .divider span{white-space:nowrap;}
+    .divider::before,
+    .divider::after{
+      content:"";
+      flex:1;
+      height:1px;
+      background:linear-gradient(to right,transparent,rgba(148,163,184,.6));
+    }
+    .divider::after{
+      background:linear-gradient(to left,transparent,rgba(148,163,184,.6));
     }
 
     /* Loading screen */
@@ -300,34 +371,66 @@
       <div class="login-header">
         <div class="login-title">
           <h1>GAARA FF TOOL</h1>
-          <span>Login to open main panel</span>
+          <span>Login with approved Gmail or master ID</span>
         </div>
         <button class="profile-btn">
           <img src="profile-logo.jpg" alt="Logo">
         </button>
       </div>
 
-      <form id="login-form" autocomplete="off" style="position:relative;z-index:1;">
-        <div class="form-group">
-          <label for="login-id">User ID</label>
-          <input id="login-id" class="form-control" placeholder="Enter your ID">
+      <!-- GOOGLE SECTION -->
+      <div class="section-title">Google Sign in</div>
+
+      <div class="google-login-wrapper">
+        <!-- This div configures the Google Identity Services client -->
+        <div id="g_id_onload"
+             data-client_id="YOUR_GOOGLE_CLIENT_ID"
+             data-callback="handleCredentialResponse"
+             data-auto_prompt="false">
         </div>
-        <div class="form-group">
-          <label for="login-pass">Password</label>
-          <input id="login-pass" type="password" class="form-control" placeholder="Enter password">
+
+        <!-- This is the actual "Sign in with Google" button -->
+        <div class="g_id_signin"
+             data-type="standard"
+             data-size="large"
+             data-theme="outline"
+             data-text="continue_with"
+             data-shape="pill"
+             data-logo_alignment="left">
+        </div>
+      </div>
+
+      <button class="btn-primary" type="button" onclick="manualPrompt()">
+        <i class="fa-brands fa-google"></i>
+        Continue with Google
+      </button>
+
+      <div class="helper-row">
+        Only <strong>approved Gmail IDs</strong> or the <strong>master ID</strong> can access the panel.
+      </div>
+
+      <div class="divider">
+        <span>Or use ID &amp; Password</span>
+      </div>
+
+      <!-- FIXED ID & PASSWORD SECTION -->
+      <form class="form-grid" onsubmit="return handleIdLogin(event)">
+        <div class="field">
+          <label for="login-id">Panel ID</label>
+          <input type="text" id="login-id" autocomplete="off" placeholder="Enter panel ID">
+        </div>
+        <div class="field">
+          <label for="login-pass">Panel Password</label>
+          <input type="password" id="login-pass" autocomplete="off" placeholder="Enter panel password">
         </div>
         <button class="btn-primary" type="submit">
-          <i class="fa-solid fa-right-to-bracket" style="margin-right:6px;"></i>
-          Login
+          <i class="fa-solid fa-right-to-bracket"></i>
+          Login with ID &amp; Password
         </button>
       </form>
 
-      <div class="helper-row">
-        Follow to get <strong>ID</strong> &nbsp; & &nbsp; <strong>Pass</strong>
-      </div>
-
       <div class="acess_tkn">
-        <a href="https://ticket.kiosgamer.co.id/">get access token</a>
+        <a href="https://ticket.kiosgamer.co.id/" target="_blank">get access token</a>
       </div>
 
       <div class="social-bar">
@@ -351,12 +454,9 @@
   </div>
 
   <script>
-    // Constant login credentials
-    const LOGIN_USER = 'gaara';
-    const LOGIN_PASS = '1919';
-
     let toastTimeout;
-    function showToast(msg, type='error', time=1800){
+
+    function showToast(msg, type='error', time=2000){
       const t = document.getElementById('toast');
       const span = t.querySelector('span');
       const icon = t.querySelector('i');
@@ -369,33 +469,107 @@
       toastTimeout = setTimeout(()=>t.classList.remove('show'), time);
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      const form = document.getElementById('login-form');
-      const loadingScreen = document.getElementById('loading-screen');
+    const loadingScreen = document.getElementById('loading-screen');
 
-      form.addEventListener('submit', (e)=>{
-        e.preventDefault();
-        const id = document.getElementById('login-id').value.trim();
-        const pass = document.getElementById('login-pass').value;
+    // TODO: put the Gmail addresses that are allowed to login
+    const ALLOWED_EMAILS = [
+      "shaikhsaadsultanali2004@gmail.com",
+      "shaikhsaadsultanali12004@gmail.com"
+      // add more here
+    ];
 
-        if(!id || !pass){
-          showToast('Please fill ID and password');
-          return;
-        }
+    // TODO: fixed master ID & password
+    const MASTER_ID = "GAARA";       // change this
+    const MASTER_PASSWORD = "1919";  // change this
 
-        if(id !== LOGIN_USER || pass !== LOGIN_PASS){
-          showToast('FOLLOW ME TO GET CORRECT ID PASSWORD', 'error');
-          return;
-        }
+    function startSuccessFlow(message){
+      showToast(message, "success", 1200);
+      sessionStorage.setItem('GAARA_ONE_TIME_TOKEN', String(Date.now()));
+      loadingScreen.classList.add('show');
+      setTimeout(()=>{
+        window.location.href = 'main.html';
+      }, 1500);
+    }
 
-        // success: set one-time token and show loading, then redirect
-        sessionStorage.setItem('GAARA_ONE_TIME_TOKEN', String(Date.now()));
-        loadingScreen.classList.add('show');
-        setTimeout(()=>{
-          window.location.href = 'main.html';
-        }, 1800);
-      });
-    });
+    // Decode JWT token from Google to get email
+    function parseJwt (token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+      } catch (e) {
+        console.error("JWT parse error", e);
+        return null;
+      }
+    }
+
+    // Called by Google Identity Services when user signs in
+    function handleCredentialResponse(response) {
+      const data = parseJwt(response.credential || "");
+      if (!data) {
+        showToast("Failed to read Google login. Try again.");
+        return;
+      }
+
+      const email = data.email;
+      if (!email) {
+        showToast("Google account has no visible email.", "error");
+        return;
+      }
+
+      // Check if email is in your whitelist
+      if (!ALLOWED_EMAILS.includes(email)) {
+        showToast("This Gmail is not authorized for GAARA panel.", "error");
+        return;
+      }
+
+      startSuccessFlow("Google login success: " + email);
+    }
+
+    // Optional: manually trigger Google's one-tap / prompt when clicking the big button
+    function manualPrompt() {
+      if (window.google && google.accounts && google.accounts.id) {
+        google.accounts.id.prompt();
+      } else {
+        showToast("Google login not loaded yet. Try again in a moment.");
+      }
+    }
+
+    // ID & PASSWORD LOGIN HANDLER
+    function handleIdLogin(e){
+      e.preventDefault();
+      const id = (document.getElementById('login-id').value || "").trim();
+      const pass = (document.getElementById('login-pass').value || "").trim();
+
+      if (!id || !pass){
+        showToast("Please enter both ID and password.");
+        return false;
+      }
+
+      if (id === MASTER_ID && pass === MASTER_PASSWORD){
+        startSuccessFlow("Master ID login successful.");
+      } else {
+        showToast("Invalid ID or password.");
+      }
+
+      return false;
+    }
+
+    // Initialize Google Identity Services once script is loaded
+    window.onload = function() {
+      const clientIdMeta = document.querySelector('meta[name="google-signin-client_id"]');
+      const clientId = clientIdMeta ? clientIdMeta.content : "YOUR_GOOGLE_CLIENT_ID";
+
+      if (window.google && google.accounts && google.accounts.id) {
+        google.accounts.id.initialize({
+          client_id: clientId,
+          callback: handleCredentialResponse
+        });
+      }
+    };
   </script>
 </body>
 </html>
