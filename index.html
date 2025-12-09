@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
 
   <!-- TODO: put your real Google OAuth client id here -->
-  <meta name="google-signin-client_id" content="337593306198-f2rjaghhmustluqiskftahagmbnmaqoh.apps.googleusercontent.com">
+  <meta name="google-signin-client_id" content="YOUR_GOOGLE_CLIENT_ID">
 
   <!-- Google Identity Services script -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -17,7 +17,7 @@
       --bg: #050816;
       --accent: #4f75df;
       --accent-2: #6621d6;
-      --text: #6396fd;
+      --text: #e5e7eb;
       --muted: #94a3b8;
     }
     * { box-sizing:border-box; margin:0; padding:0; }
@@ -379,10 +379,6 @@
         </button>
       </div>
 
-      <div class="divider">
-        <span>Google sign in</span>
-      </div>
-
       <!-- GOOGLE SECTION -->
       <div class="section-title">Google Sign in</div>
 
@@ -411,7 +407,7 @@
       </button>
 
       <div class="helper-row">
-        Only <strong>Approved Gmail IDs</strong> or the <strong>ID & PASS</strong> can access the panel.
+        Only <strong>approved Gmail IDs</strong> or the <strong>master ID</strong> can access the panel.
       </div>
 
       <div class="divider">
@@ -421,12 +417,12 @@
       <!-- FIXED ID & PASSWORD SECTION -->
       <form class="form-grid" onsubmit="return handleIdLogin(event)">
         <div class="field">
-          <label for="login-id">Panel ID</label>
-          <input type="text" id="login-id" autocomplete="off" placeholder="Enter panel ID">
+          <label for="login-id">User ID</label>
+          <input type="text" id="login-id" autocomplete="off" placeholder="Enter user ID">
         </div>
         <div class="field">
-          <label for="login-pass">Panel Password</label>
-          <input type="password" id="login-pass" autocomplete="off" placeholder="Enter panel password">
+          <label for="login-pass">User Password</label>
+          <input type="password" id="login-pass" autocomplete="off" placeholder="Enter user password">
         </div>
         <button class="btn-primary" type="submit">
           <i class="fa-solid fa-right-to-bracket"></i>
@@ -527,7 +523,7 @@
 
       // Check if email is in your whitelist
       if (!ALLOWED_EMAILS.includes(email)) {
-        showToast("This Gmail is not authorized for GAARA TOOL.", "error");
+        showToast("This Gmail is not authorized for GAARA panel.", "error");
         return;
       }
 
